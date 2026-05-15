@@ -1,0 +1,491 @@
+Requisitos para um Sistema de Venda de Ingressos
+1. Objetivo do Sistema
+
+O sistema deve permitir:
+
+criação e gerenciamento de eventos
+venda de ingressos online
+controle de lotes
+validação de ingressos
+pagamentos
+geração de QR Code
+controle de acesso
+relatórios financeiros e operacionais
+
+Pode ser usado para:
+
+shows
+conferências
+eventos corporativos
+cinemas
+teatros
+festas
+eventos esportivos
+2. Tipos de Usuários
+Cliente
+
+Responsável por:
+
+criar conta
+comprar ingressos
+visualizar pedidos
+receber ingressos
+cancelar pedidos (quando permitido)
+Organizador
+
+Responsável por:
+
+criar eventos
+criar lotes
+acompanhar vendas
+validar ingressos
+acessar relatórios
+Admin
+
+Responsável por:
+
+gerenciar plataforma
+aprovar eventos
+controlar usuários
+auditoria
+gestão financeira
+
+3. Requisitos Funcionais
+Autenticação
+RF001 — Cadastro
+
+Usuário deve conseguir criar conta.
+
+RF002 — Login
+
+Sistema deve permitir autenticação segura.
+
+RF003 — Recuperação de senha
+
+Usuário deve redefinir senha via email.
+
+RF004 — Perfis e permissões
+
+Perfis:
+
+CUSTOMER
+ORGANIZER
+ADMIN
+Eventos
+RF005 — Criar evento
+
+Organizador deve conseguir criar evento contendo:
+
+nome
+descrição
+banner
+local
+data
+horário
+capacidade
+categorias
+regras
+RF006 — Publicar evento
+
+Evento pode ficar:
+
+DRAFT
+PUBLISHED
+CANCELED
+FINISHED
+RF007 — Listagem de eventos
+
+Usuários devem visualizar eventos disponíveis.
+
+Filtros:
+data
+cidade
+categoria
+preço
+RF008 — Página do evento
+
+Evento deve possuir página detalhada.
+
+Ingressos
+RF009 — Criar tipos de ingresso
+
+Exemplo:
+
+VIP
+Normal
+Camarote
+Estudante
+
+RF010 — Controle de lotes
+
+Cada ingresso pode possuir lotes:
+
+primeiro lote
+segundo lote
+promocional
+RF011 — Controle de estoque
+
+Sistema deve limitar quantidade disponível.
+
+RF012 — Compra de ingressos
+
+Cliente deve conseguir comprar múltiplos ingressos.
+
+RF013 — Reserva temporária
+
+Ao iniciar checkout:
+
+ingresso fica reservado temporariamente
+
+Exemplo:
+
+15 minutos
+RF014 — Expiração automática
+
+Reserva deve expirar automaticamente.
+
+RF015 — QR Code
+
+Cada ingresso deve gerar QR Code único.
+
+RF016 — Ticket digital
+
+Sistema deve gerar ingresso digital.
+
+Formato:
+
+PDF
+Wallet pass
+QR Code
+RF017 — Transferência de ingresso
+
+Usuário pode transferir ingresso para outro usuário.
+
+RF018 — Cancelamento
+
+Sistema deve permitir cancelamento conforme regras.
+
+Pagamentos
+RF019 — Integração com gateway
+
+Exemplos:
+
+Stripe
+PayPal
+Mercado Pago
+Paystack
+RF020 — Métodos de pagamento
+cartão
+transferência
+carteira digital
+RF021 — Confirmação automática
+
+Pagamento aprovado deve liberar ingresso automaticamente.
+
+RF022 — Reembolso
+
+Sistema deve permitir reembolso.
+
+Check-in e Validação
+RF023 — Validação de ingresso
+
+Organizador deve validar QR Code.
+
+RF024 — Anti-fraude
+
+QR Code não pode ser reutilizado.
+
+RF025 — Check-in em tempo real
+
+Sistema deve registrar entrada do participante.
+
+RF026 — Modo offline
+
+Check-in deve funcionar offline temporariamente.
+
+Dashboard
+RF027 — Dashboard do organizador
+
+Exibir:
+
+total vendido
+ingressos restantes
+receita
+check-ins
+taxa de ocupação
+Relatórios
+RF028 — Relatórios financeiros
+receita
+vendas
+reembolsos
+taxas
+RF029 — Exportação
+
+Exportar:
+
+CSV
+Excel
+PDF
+Notificações
+RF030 — Emails automáticos
+
+Enviar:
+
+confirmação
+ingresso
+cancelamento
+lembretes
+RF031 — Notificações em tempo real
+
+Notificar:
+
+compra aprovada
+evento cancelado
+mudança de horário
+Auditoria
+RF032 — Logs
+
+Registrar:
+
+compras
+cancelamentos
+check-ins
+alterações de eventos
+4. Requisitos Não Funcionais
+RNF001 — Alta concorrência
+
+Sistema deve suportar milhares de usuários simultâneos.
+
+RNF002 — Consistência
+
+Evitar overselling de ingressos.
+
+RNF003 — Performance
+
+Checkout deve responder rapidamente.
+
+RNF004 — Segurança
+JWT/OAuth
+criptografia
+proteção anti-fraude
+rate limiting
+RNF005 — Escalabilidade
+
+Sistema deve suportar picos de tráfego.
+
+RNF006 — Disponibilidade
+
+Disponibilidade mínima:
+
+99.9%
+5. Entidades Principais
+User
+id
+name
+email
+password
+role
+created_at
+
+Event
+id
+title
+description
+location
+banner
+capacity
+status
+starts_at
+ends_at
+organizer_id
+
+TicketType
+id
+event_id
+name
+price
+quantity
+
+TicketBatch
+id
+ticket_type_id
+name
+price
+quantity
+starts_at
+ends_at
+
+Order
+id
+user_id
+status
+total
+payment_status
+created_at
+
+OrderItem
+id
+order_id
+ticket_id
+price
+quantity
+
+Ticket
+id
+event_id
+user_id
+qr_code
+status
+validated_at
+
+Payment
+id
+order_id
+gateway
+status
+transaction_id
+amount
+paid_at
+
+6. Regras de Negócio
+RN001
+
+Ingresso não pode ser vendido acima da capacidade.
+
+RN002
+
+QR Code só pode ser validado uma vez.
+
+RN003
+
+Ingresso expirado não pode entrar.
+
+RN004
+
+Reserva deve expirar automaticamente.
+
+RN005
+
+Pagamento aprovado gera ingresso automaticamente.
+
+RN006
+
+Evento cancelado deve disparar reembolso.
+
+RN007
+
+Lotes devem respeitar datas e quantidade.
+
+7. Problemas Reais Que Vale Resolver
+Overselling
+
+Evitar duas pessoas comprarem o último ingresso simultaneamente.
+
+Soluções:
+
+transações
+lock otimista/pessimista
+Redis distributed lock
+Picos de acesso
+
+Exemplo:
+
+show famoso abrindo vendas
+
+Soluções:
+
+filas
+cache
+rate limit
+CDN
+Fraude
+
+Problemas:
+
+QR Code duplicado
+chargeback
+8. Funcionalidades Avançadas
+Assentos numerados
+
+Mapa visual de lugares.
+
+Fila virtual
+
+Usuários entram em fila antes da compra.
+
+Marketplace
+
+Revenda oficial de ingressos.
+
+Dynamic pricing
+
+Preço muda conforme demanda.
+
+Lista de espera
+
+Quando esgotado.
+
+Carteira digital
+
+Ingressos armazenados na conta.
+
+Sistema antifraude
+
+Detecção de bots.
+
+9. Arquitetura Recomendada
+Backend
+Go
+Clean Architecture
+DDD
+Banco
+PostgreSQL
+Cache
+Redis
+
+Usos:
+
+reserva temporária
+fila
+rate limit
+Mensageria
+RabbitMQ
+Kafka
+Storage
+S3/MinIO
+Tempo real
+WebSocket
+SSE
+10. Microsserviços Que Fazem Sentido
+Auth Service
+Event Service
+Ticket Service
+Payment Service
+Notification Service
+Check-in Service
+11. Desafios Técnicos Importantes
+Concorrência
+
+Evitar venda duplicada.
+
+Idempotência
+
+Webhook de pagamento pode chegar duplicado.
+
+Distribuição
+
+Múltiplas instâncias vendendo ao mesmo tempo.
+
+Escalabilidade
+
+Eventos populares geram picos extremos.
+
+12. Diferenciais de Produto
+mapa 3D do evento
+analytics em tempo real
+heatmap de vendas
+integração WhatsApp
+IA para previsão de demanda
+recomendação de eventos
+dark mode
+PWA/mobile app
