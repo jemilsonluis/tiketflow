@@ -1,7 +1,6 @@
 package repository
 
 import (
-	"github.com/jemilsonluis/internals/_shared/params"
 	"github.com/jemilsonluis/internals/modules/users/domain/dto"
 	"github.com/jemilsonluis/internals/modules/users/domain/entity"
 )
@@ -11,6 +10,6 @@ type IUserRepository interface {
 	FetchUsers() ([]*entity.UserEntity, error)
 	FindUserById(userId string) (*entity.UserEntity, error)
 	FindUserByEmail(email string) (*entity.UserEntity, error)
-	Update(params params.UpdateUserParams) (*entity.UserEntity, error)
+	Update(params dto.UpdateUserDTO) (*entity.UserEntity, error)
 	Delete(userId string) error
 }
